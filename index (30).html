@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Central dos Moto Clubes — Conectando Motoclubes de Todo o Brasil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+:root{
+  --black:#0a0908;
+  --black-soft:#151212;
+  --card:#1c1817;
+  --cream:#f2e9db;
+  --smoke:#b3a89a;
+  --red:#c31f1f;
+  --red-deep:#8f1414;
+  --line: rgba(242,233,219,.12);
+  --line-strong: rgba(242,233,219,.24);
+  --display:'Anton',sans-serif;
+  --body:'Inter',sans-serif;
+  --tag:'Oswald',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--cream);font-family:var(--body);line-height:1.5;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+img,svg{display:block;max-width:100%;}
+h1,h2{font-family:var(--display);text-transform:uppercase;font-weight:400;line-height:1;letter-spacing:.01em;}
+
+.divider{height:3px;background:linear-gradient(90deg, transparent, var(--red) 15%, var(--red) 85%, transparent);}
+
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 6vw;background:var(--black-soft);border-bottom:1px solid var(--line);flex-wrap:wrap;gap:1rem;}
+.nav-logo{display:flex;align-items:center;gap:.7rem;}
+.nav-logo svg{width:46px;height:46px;flex-shrink:0;}
+.nav-logo .word{display:flex;flex-direction:column;line-height:1;font-family:var(--display);}
+.nav-logo .word span:first-child{font-size:.8rem;letter-spacing:.15em;color:var(--smoke);}
+.nav-logo .word span:last-child{font-size:1.3rem;}
+.nav-links{display:none;gap:1.8rem;align-items:center;}
+.nav-links a{font-family:var(--body);font-size:.95rem;font-weight:500;color:var(--cream);opacity:.85;}
+.nav-links a:hover{opacity:1;color:var(--red);}
+.hamburger{display:flex;flex-direction:column;gap:5px;width:26px;}
+.hamburger span{height:2px;background:var(--cream);width:100%;}
+@media(min-width:920px){.nav-links{display:flex;}.hamburger{display:none;}}
+
+.hero{position:relative;min-height:78vh;display:flex;align-items:center;overflow:hidden;
+  background:
+    linear-gradient(100deg, rgba(10,9,8,.92) 0%, rgba(10,9,8,.55) 45%, rgba(10,9,8,.25) 70%),
+    url('https://images.unsplash.com/photo-1594966345302-2b954c02098f?w=1800&q=70&auto=format&fit=crop&fm=jpg') center 40% / cover no-repeat;
+  padding:3rem 6vw;}
+.hero-content{max-width:560px;}
+.hero-content h1{font-size:clamp(2.2rem,6vw,3.4rem);}
+.hero-actions{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1.8rem;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.9rem 1.8rem;font-family:var(--body);font-weight:700;font-size:.92rem;border-radius:6px;transition:transform .2s, box-shadow .2s;}
+.btn-red{background:var(--red);color:var(--cream);box-shadow:0 4px 14px -4px rgba(195,31,31,.6);}
+.btn-red:hover{transform:translateY(-2px);}
+.btn-cream{background:var(--cream);color:var(--black);}
+.btn-cream:hover{transform:translateY(-2px);}
+
+.categorias{padding:2.6rem 6vw;background:var(--black-soft);}
+.cat-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:1rem;}
+.cat-card{position:relative;aspect-ratio:4/3;border-radius:6px;overflow:hidden;border:1px solid var(--line-strong);display:flex;align-items:flex-end;justify-content:center;text-align:center;padding:1.2rem;background:var(--card);}
+.cat-card.featured{border-color:var(--red);}
+.cat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg, rgba(10,9,8,.85) 20%, rgba(10,9,8,.15) 70%);}
+.cat-card.icon-card::before{background:linear-gradient(160deg, rgba(195,31,31,.35), rgba(10,9,8,.85));}
+.cat-card span{position:relative;font-family:var(--display);font-size:1.3rem;text-transform:uppercase;}
+.cat-card .icon{position:relative;font-size:2.2rem;margin-bottom:.6rem;display:block;}
+@media(min-width:640px){.cat-grid{grid-template-columns:repeat(2,1fr);}}
+@media(min-width:980px){.cat-grid{grid-template-columns:repeat(4,1fr);}}
+
+/* Map (real, interactive — same as mapa-biker.html) */
+.mapa-section{padding:3.5rem 6vw;}
+.mapa-inner{max-width:1200px;margin:0 auto;}
+.mapa-inner h2{font-size:clamp(1.8rem,4.5vw,2.6rem);margin-bottom:1.6rem;}
+.mapa-frame{position:relative;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;height:480px;}
+#home-map{width:100%;height:100%;filter:saturate(.85) contrast(1.08) brightness(.95);}
+.mapa-legend{position:absolute;top:1rem;left:1rem;z-index:400;background:rgba(10,9,8,.85);border:1px solid var(--line-strong);border-radius:6px;padding:.5rem .8rem;font-size:.8rem;color:var(--smoke);display:flex;gap:1rem;}
+.mapa-legend span{display:flex;align-items:center;gap:.4rem;}
+.mapa-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+.mapa-legend .dot.club{background:#e23434;}
+.mapa-legend .dot.event{background:#3fbf6f;}
+.mapa-cta{position:absolute;bottom:1rem;right:1rem;z-index:400;}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--card);color:var(--cream);}
+.leaflet-popup-content{font-family:var(--body);}
+.leaflet-popup-content b{font-family:var(--tag);}
+
+.eventos-section{padding:3.5rem 6vw;background:var(--black-soft);}
+.eventos-inner{max-width:1200px;margin:0 auto;}
+.eventos-inner h2{font-size:clamp(1.8rem,4.5vw,2.6rem);margin-bottom:1.8rem;}
+.eventos-grid{display:grid;grid-template-columns:1fr;gap:1.2rem;}
+.evento-card{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--line-strong);}
+.evento-card img{width:100%;height:100%;object-fit:cover;}
+.evento-overlay{position:absolute;inset:0;background:linear-gradient(0deg, rgba(10,9,8,.95) 25%, transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:1.1rem;}
+.evento-date{position:absolute;top:.9rem;left:.9rem;background:var(--red);padding:.4rem .7rem;text-align:center;border-radius:4px;font-family:var(--display);line-height:1;}
+.evento-date .d{font-size:1.15rem;display:block;}
+.evento-date .m{font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;}
+.evento-card h3{font-family:var(--body);font-weight:700;font-size:1.05rem;}
+.evento-card .loc{font-size:.85rem;color:var(--smoke);margin-top:.3rem;}
+@media(min-width:640px){.eventos-grid{grid-template-columns:repeat(3,1fr);}}
+.eventos-btn-wrap{text-align:center;margin-top:2rem;}
+
+.cta-final{padding:4rem 6vw;text-align:center;}
+.cta-final h2{font-size:clamp(1.8rem,4.5vw,2.6rem);margin-bottom:1.6rem;}
+
+footer{padding:2.2rem 6vw;border-top:1px solid var(--line);text-align:center;color:var(--smoke);font-size:.85rem;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <svg viewBox="0 0 60 60" fill="none">
+      <path d="M30 6 L36 16 L48 12 L44 24 L54 30 L44 36 L48 48 L36 44 L30 54 L24 44 L12 48 L16 36 L6 30 L16 24 L12 12 L24 16 Z" fill="none" stroke="var(--cream)" stroke-width="1.5"/>
+      <path d="M18 24c5-5 14-6 19-4M42 24c-5-5-14-6-19-4" stroke="var(--red)" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="30" cy="30" r="7" fill="none" stroke="var(--cream)" stroke-width="1.5"/>
+      <path d="M26 29c0-2 1.5-3 4-3s4 1 4 3-1.5 2-1.5 3.5S31.5 34 30 34s-2.5-.5-2.5-1.5S26 31 26 29z" fill="var(--red)"/>
+    </svg>
+    <div class="word"><span>CENTRAL</span><span>CENTRAL DOS MOTOCLUBES</span></div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Início</a>
+    <a href="motoclubes.html">Motoclubes</a>
+    <a href="mapa-biker.html">Mapa Biker</a>
+    <a href="#eventos">Eventos</a>
+    <a href="motoclubes.html#cadastrar">Cadastrar</a>
+    <a href="#sobre">Sobre</a>
+  </div>
+  <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="divider"></div>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Conectando Motoclubes de Todo o Brasil</h1>
+    <div class="hero-actions">
+      <a href="motoclubes.html" class="btn btn-red">Explorar Motoclubes</a>
+      <a href="motoclubes.html#cadastrar" class="btn btn-cream">Cadastrar Grupo</a>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<section class="categorias">
+  <div class="cat-grid">
+    <a href="motoclubes.html" class="cat-card icon-card"><span class="icon">🏍️</span><span>Motoclubes</span></a>
+    <a href="motoclubes.html?tipo=grupo" class="cat-card" style="background-image:linear-gradient(160deg, rgba(10,9,8,.2), rgba(10,9,8,.9)), url('https://images.unsplash.com/photo-1598319468015-a23879b6ec41?w=700&q=65&auto=format&fit=crop&fm=jpg');background-size:cover;background-position:center;"><span>Motogrupos</span></a>
+    <a href="motoclubes.html?tipo=casal" class="cat-card featured" style="background-image:linear-gradient(160deg, rgba(195,31,31,.25), rgba(10,9,8,.9)), url('https://images.unsplash.com/photo-1767274859042-b0f619b8bc36?w=700&q=65&auto=format&fit=crop&fm=jpg');background-size:cover;background-position:center;"><span>Moto Casais</span></a>
+    <a href="motoclubes.html?tipo=viajante" class="cat-card" style="background-image:linear-gradient(160deg, rgba(10,9,8,.2), rgba(10,9,8,.9)), url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=700&q=65&auto=format&fit=crop&fm=jpg');background-size:cover;background-position:center;"><span>Moto Viajantes</span></a>
+  </div>
+</section>
+<div class="divider"></div>
+
+<section class="mapa-section" id="mapa">
+  <div class="mapa-inner">
+    <h2>Mapa Biker</h2>
+    <div class="mapa-frame">
+      <div class="mapa-legend"><span><i class="dot club"></i>Motoclubes</span><span><i class="dot event"></i>Eventos</span></div>
+      <a href="mapa-biker.html" class="btn btn-red mapa-cta">Ver Mapa Completo</a>
+      <div id="home-map"></div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<section class="eventos-section" id="eventos">
+  <div class="eventos-inner">
+    <h2>Próximos Eventos</h2>
+    <div class="eventos-grid">
+      <div class="evento-card">
+        <img src="https://images.unsplash.com/photo-1751356424666-62156d33cc40?w=700&q=65&auto=format&fit=crop&fm=jpg" alt="Encontro dos Caveirás">
+        <div class="evento-date"><span class="d">15</span><span class="m">Jul</span></div>
+        <div class="evento-overlay"><h3>Encontro dos Caveirás</h3><span class="loc">📍 São Paulo</span></div>
+      </div>
+      <div class="evento-card">
+        <img src="https://images.unsplash.com/photo-1767274859042-b0f619b8bc36?w=700&q=65&auto=format&fit=crop&fm=jpg" alt="Moto Casais Tour">
+        <div class="evento-date"><span class="d">22</span><span class="m">Jul</span></div>
+        <div class="evento-overlay"><h3>Moto Casais Tour</h3><span class="loc">📍 Gramado</span></div>
+      </div>
+      <div class="evento-card">
+        <img src="https://images.unsplash.com/photo-1751356424643-c88ba7931b96?w=700&q=65&auto=format&fit=crop&fm=jpg" alt="Biker Fest">
+        <div class="evento-date"><span class="d">30</span><span class="m">Jul</span></div>
+        <div class="evento-overlay"><h3>Biker Fest</h3><span class="loc">📍 Goiânia</span></div>
+      </div>
+    </div>
+    <div class="eventos-btn-wrap"><a href="#" class="btn btn-red">Ver Todos os Eventos</a></div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<section class="cta-final">
+  <h2>Seu grupo ainda não está aqui?</h2>
+  <a href="motoclubes.html#cadastrar" class="btn btn-red" style="padding:1.1rem 2.4rem;">Cadastrar Seu Grupo</a>
+</section>
+
+<footer id="sobre">
+  © 2026 Central dos Moto Clubes — Conectando motociclistas de todo o Brasil. Protótipo de layout.
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var homeMap = L.map('home-map', { scrollWheelZoom:false }).setView([-14.6, -50.5], 4);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(homeMap);
+
+function pin(color){
+  return L.divIcon({
+    className:'',
+    html:'<div style="width:16px;height:16px;border-radius:50% 50% 50% 0;background:'+color+';transform:rotate(-45deg);border:2px solid #0a0908;box-shadow:0 0 0 1px rgba(255,255,255,.25);"></div>',
+    iconSize:[16,16], iconAnchor:[8,16]
+  });
+}
+
+var clubes = [
+  ["Wolf Skull MG", "Cachoeiro de Itapemirim, ES", -20.8486, -41.1130],
+  ["Skorpions MC do Asfalto", "Belo Horizonte, MG", -19.9167, -43.9345],
+  ["Black Night MC", "Rio das Ostras, RJ", -22.5297, -41.9453],
+  ["TGS Four", "Barão de Cocais, MG", -19.9486, -43.4919]
+];
+clubes.forEach(function(c){
+  L.marker([c[2],c[3]], {icon:pin('#e23434')}).addTo(homeMap)
+    .bindPopup('<b>'+c[0]+'</b><br>'+c[1]);
+});
+
+var eventos = [
+  ["Encontro dos Caveirás", "São Paulo, SP — 15 Jul", -23.5505, -46.6333],
+  ["Moto Casais Tour", "Gramado, RS — 22 Jul", -29.3747, -50.8764],
+  ["Biker Fest", "Goiânia, GO — 30 Jul", -16.6869, -49.2648]
+];
+eventos.forEach(function(e){
+  L.marker([e[2],e[3]], {icon:pin('#3fbf6f')}).addTo(homeMap)
+    .bindPopup('<b>'+e[0]+'</b><br>'+e[1]);
+});
+</script>
+<script>
+document.querySelector('.hamburger').addEventListener('click', () => {
+  document.querySelector('.nav-links').style.display =
+    document.querySelector('.nav-links').style.display === 'flex' ? 'none' : 'flex';
+  document.querySelector('.nav-links').style.flexDirection = 'column';
+  document.querySelector('.nav-links').style.width = '100%';
+});
+</script>
+</body>
+</html>
