@@ -3,172 +3,248 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Central dos Moto Clubes — Listagem</title>
+<title>Motoclubes — Central dos Moto Clubes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --black:#0a0908;
-  --black-soft:#161210;
-  --charcoal:#1f1a16;
-  --card:#221c18;
-  --leather:#2b221c;
+  --black-soft:#151212;
+  --card:#1c1817;
   --cream:#f2e9db;
   --smoke:#b3a89a;
-  --red:#e2231a;
-  --orange:#ff8c1a;
-  --flame: linear-gradient(100deg, var(--red), var(--orange));
-  --line: rgba(242,233,219,.10);
-  --line-strong: rgba(242,233,219,.22);
+  --red:#c31f1f;
+  --red-deep:#8f1414;
+  --line: rgba(242,233,219,.12);
+  --line-strong: rgba(242,233,219,.24);
   --display:'Anton',sans-serif;
   --body:'Inter',sans-serif;
   --tag:'Oswald',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--black);color:var(--cream);font-family:var(--body);line-height:1.5;position:relative;}
-.page-grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
-  background-image:repeating-linear-gradient(115deg, transparent 0 60px, rgba(242,233,219,.6) 60px 61px, transparent 61px 130px),
-    repeating-linear-gradient(25deg, transparent 0 90px, rgba(0,0,0,.5) 90px 91px, transparent 91px 170px);}
-.page-vignette{position:fixed;inset:0;z-index:-1;pointer-events:none;
-  box-shadow:inset 0 0 180px 40px rgba(0,0,0,.75);}
+body{background:var(--black);color:var(--cream);font-family:var(--body);line-height:1.5;overflow-x:hidden;}
 a{color:inherit;text-decoration:none;}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
-.eyebrow{font-family:var(--tag);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);font-weight:600;display:inline-flex;align-items:center;gap:.6rem;}
-.eyebrow::before{content:'';width:26px;height:2px;background:var(--flame);display:inline-block;}
-h1,h2{font-family:var(--display);text-transform:uppercase;font-weight:400;letter-spacing:.01em;}
+button,select,input{font-family:inherit;cursor:pointer;}
+img,svg{display:block;max-width:100%;}
+h1,h2{font-family:var(--display);text-transform:uppercase;font-weight:400;line-height:1;letter-spacing:.01em;}
 
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 6vw;border-bottom:1px solid var(--line);}
-.topbar-logo{display:flex;align-items:center;gap:.6rem;font-family:var(--display);font-size:1.1rem;}
-.topbar-logo svg{width:30px;height:30px;flex-shrink:0;}
-.topbar-logo span:last-child{color:var(--orange);}
-.voltar{font-family:var(--tag);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;border:1px solid var(--line-strong);padding:.6rem 1.1rem;border-radius:3px;}
-.voltar:hover{border-color:var(--orange);color:var(--orange);}
+.divider{height:3px;background:linear-gradient(90deg, transparent, var(--red) 15%, var(--red) 85%, transparent);}
 
-.section{padding:3.5rem 6vw;max-width:1200px;margin:0 auto;}
-.section h1{font-size:clamp(1.9rem,5vw,3rem);margin-top:.5rem;}
-.section-sub{color:var(--smoke);margin-top:.6rem;}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 6vw;background:var(--black-soft);border-bottom:1px solid var(--line);flex-wrap:wrap;gap:1rem;}
+.nav-logo{display:flex;align-items:center;gap:.7rem;}
+.nav-logo svg{width:46px;height:46px;flex-shrink:0;}
+.nav-logo .word{display:flex;flex-direction:column;line-height:1;font-family:var(--display);}
+.nav-logo .word span:first-child{font-size:.8rem;letter-spacing:.15em;color:var(--smoke);}
+.nav-logo .word span:last-child{font-size:1.3rem;}
+.nav-links{display:none;gap:1.8rem;align-items:center;}
+.nav-links a{font-family:var(--body);font-size:.95rem;font-weight:500;color:var(--cream);opacity:.85;}
+.nav-links a:hover{opacity:1;color:var(--red);}
+.nav-links a.active{opacity:1;color:var(--red);}
+.hamburger{display:flex;flex-direction:column;gap:5px;width:26px;}
+.hamburger span{height:2px;background:var(--cream);width:100%;}
+@media(min-width:920px){.nav-links{display:flex;}.hamburger{display:none;}}
 
-.clubes-grid{display:grid;grid-template-columns:1fr;gap:1.4rem;margin-top:2.4rem;}
-.patch-card{background:var(--card);border:1px solid var(--line);padding:2rem 1.4rem 1.6rem;text-align:center;transition:border-color .25s, transform .25s;cursor:pointer;}
-.patch-card:hover{border-color:var(--orange);transform:translateY(-4px);}
-.patch-badge{width:100px;height:100px;border-radius:50%;margin:0 auto .3rem;position:relative;display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(circle at 35% 30%, #3a2a20, var(--leather));
-  border:3px double var(--line-strong);
-  box-shadow:0 0 0 3px var(--black-soft), 0 4px 10px rgba(0,0,0,.5), inset 0 0 14px rgba(0,0,0,.6);}
-.patch-badge::before{content:'';position:absolute;inset:8px;border-radius:50%;border:1.5px dashed var(--orange);opacity:.55;}
-.patch-badge .emoji{font-size:2.3rem;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));}
-.patch-ribbon{display:inline-block;background:var(--flame);color:#1a0e08;font-family:var(--tag);font-size:.62rem;font-weight:700;letter-spacing:.1em;padding:.2rem .7rem;border-radius:2px;transform:rotate(-2deg);box-shadow:0 2px 4px rgba(0,0,0,.4);margin-bottom:.7rem;}
-.patch-card h3{font-family:var(--tag);font-size:1.1rem;font-weight:600;text-transform:uppercase;letter-spacing:.02em;}
-.patch-card span{color:var(--smoke);font-size:.82rem;display:block;margin-top:.3rem;}
+/* Hero com fundo.jpeg */
+.hero{position:relative;min-height:46vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;
+  background:
+    linear-gradient(180deg, rgba(10,9,8,.55) 0%, rgba(10,9,8,.88) 80%, var(--black) 100%),
+    url('img/road3.jpeg') center / cover no-repeat;
+  padding:4rem 6vw 2.5rem;}
+.hero h1{font-size:clamp(1.9rem,5vw,2.8rem);max-width:640px;}
+.hero p{margin-top:1rem;color:var(--smoke);max-width:520px;font-size:1rem;}
+.hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;margin-top:1.8rem;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.9rem 1.8rem;font-family:var(--body);font-weight:700;font-size:.92rem;border:none;border-radius:6px;transition:transform .2s, box-shadow .2s;}
+.btn-red{background:var(--red);color:var(--cream);box-shadow:0 4px 14px -4px rgba(195,31,31,.6);}
+.btn-red:hover{transform:translateY(-2px);}
+.btn-cream{background:var(--cream);color:var(--black);}
+.btn-cream:hover{transform:translateY(-2px);}
+.btn-outline{background:transparent;border:1px solid var(--line-strong);color:var(--cream);}
+.btn-outline:hover{border-color:var(--red);color:var(--red);}
+
+/* Busca */
+.busca-section{padding:2.2rem 6vw;background:var(--black-soft);border-bottom:1px solid var(--line);}
+.busca-inner{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;}
+.busca-inner input, .busca-inner select{padding:.85rem 1rem;background:var(--card);border:1px solid var(--line-strong);border-radius:6px;color:var(--cream);font-size:.9rem;}
+.busca-inner input{flex:2;min-width:200px;}
+.busca-inner select{flex:1;min-width:150px;}
+.busca-inner .count{margin-left:auto;font-family:var(--tag);color:var(--smoke);font-size:.85rem;}
+
+/* Grid de clubes */
+.clubes-section{padding:3rem 6vw;}
+.clubes-inner{max-width:1200px;margin:0 auto;}
+.clubes-grid{display:grid;grid-template-columns:1fr;gap:1.3rem;}
 @media(min-width:640px){.clubes-grid{grid-template-columns:repeat(2,1fr);}}
-@media(min-width:1000px){.clubes-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}}
+@media(min-width:980px){.clubes-grid{grid-template-columns:repeat(4,1fr);}}
 
-.vazio{color:var(--smoke);padding:3rem 0;text-align:center;font-family:var(--tag);text-transform:uppercase;letter-spacing:.03em;}
+.clube-card{background:var(--card);border:1px solid var(--line-strong);border-radius:10px;padding:1.4rem 1.2rem;text-align:center;transition:transform .2s, border-color .2s;}
+.clube-card:hover{transform:translateY(-4px);border-color:var(--red);}
+.clube-logo{width:104px;height:104px;border-radius:50%;overflow:hidden;background:var(--black);border:2px solid var(--red);margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;}
+.clube-logo img{width:100%;height:100%;object-fit:cover;}
+.clube-card h3{font-family:var(--body);font-weight:700;font-size:1.02rem;}
+.clube-card .loc{font-size:.82rem;color:var(--smoke);margin:.35rem 0 1.1rem;}
+.clube-card .tag{display:inline-block;font-family:var(--tag);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--red);background:rgba(195,31,31,.12);border:1px solid rgba(195,31,31,.3);padding:.25rem .6rem;border-radius:20px;margin-bottom:1rem;}
 
-.clube-modal-overlay{position:fixed;inset:0;background:rgba(10,9,8,.85);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200;padding:6vw;}
-.clube-modal-overlay.open{display:flex;}
-.clube-modal{background:var(--card);border:1px solid var(--line-strong);max-width:420px;width:100%;padding:2.4rem 2rem;text-align:center;position:relative;}
-.clube-modal-close{position:absolute;top:.8rem;right:.8rem;font-size:1.4rem;color:var(--smoke);}
-.clube-modal .patch-badge{margin-bottom:1.2rem;}
-.clube-modal h3{font-family:var(--tag);font-size:1.3rem;text-transform:uppercase;font-weight:600;margin-bottom:.3rem;}
-.clube-modal .local{color:var(--smoke);font-size:.9rem;margin-bottom:1.4rem;display:block;}
+.cta-final{padding:4rem 6vw;text-align:center;}
+.cta-final h2{font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:1.6rem;}
+
+footer{padding:2.2rem 6vw;border-top:1px solid var(--line);text-align:center;color:var(--smoke);font-size:.85rem;}
 </style>
 </head>
 <body>
-<div class="page-grain"></div>
-<div class="page-vignette"></div>
 
-<div class="topbar">
-  <div class="topbar-logo">
-    <svg viewBox="0 0 48 48" fill="none">
-      <circle cx="24" cy="22" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
-      <path d="M18 20c0-2 2-4 6-4s6 2 6 4-2 3-2 5-1 4-4 4-4-2-4-4-2-3-2-5z" fill="currentColor"/>
-      <path d="M6 18c4-4 9-5 12-3M42 18c-4-4-9-5-12-3" stroke="var(--orange)" stroke-width="2" stroke-linecap="round"/>
+<nav class="nav">
+  <div class="nav-logo">
+    <svg viewBox="0 0 60 60" fill="none">
+      <path d="M30 6 L36 16 L48 12 L44 24 L54 30 L44 36 L48 48 L36 44 L30 54 L24 44 L12 48 L16 36 L6 30 L16 24 L12 12 L24 16 Z" fill="none" stroke="var(--cream)" stroke-width="1.5"/>
+      <path d="M18 24c5-5 14-6 19-4M42 24c-5-5-14-6-19-4" stroke="var(--red)" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="30" cy="30" r="7" fill="none" stroke="var(--cream)" stroke-width="1.5"/>
+      <path d="M26 29c0-2 1.5-3 4-3s4 1 4 3-1.5 2-1.5 3.5S31.5 34 30 34s-2.5-.5-2.5-1.5S26 31 26 29z" fill="var(--red)"/>
     </svg>
-    <span>CENTRAL DOS MOTOCLUBES</span>
+    <div class="word"><span>CENTRAL</span><span>CENTRAL DOS MOTOCLUBES</span></div>
   </div>
-  <a href="motoclubes.html" class="voltar">← Voltar ao início</a>
-</div>
-
-<div class="section">
-  <span class="eyebrow" id="tipoEyebrow">Categoria</span>
-  <h1 id="tipoTitulo">Motoclubes</h1>
-  <p class="section-sub" id="tipoSub">Todos os cadastros nessa categoria.</p>
-
-  <div class="clubes-grid" id="clubesGrid"></div>
-  <p class="vazio" id="vazioMsg" style="display:none;">Nenhum cadastro nessa categoria ainda — em breve.</p>
-</div>
-
-<div class="clube-modal-overlay" id="clubeModalOverlay">
-  <div class="clube-modal">
-    <button class="clube-modal-close" id="clubeModalClose" aria-label="Fechar">✕</button>
-    <div class="patch-badge"><span class="emoji" id="clubeModalBadge"></span></div>
-    <span class="patch-ribbon">MC</span>
-    <h3 id="clubeModalNome"></h3>
-    <span class="local" id="clubeModalLocal"></span>
-    <p style="color:var(--smoke);font-size:.85rem;">Perfil completo (fotos, contato e história) chega assim que o cadastro real do motoclube estiver integrado.</p>
+  <div class="nav-links">
+    <a href="index.html">Início</a>
+    <a href="motoclubes.html" class="active">Motoclubes</a>
+    <a href="mapa-biker.html">Mapa Biker</a>
+    <a href="index.html#eventos">Eventos</a>
+    <a href="motoclubes.html#cadastrar">Cadastrar</a>
+    <a href="index.html#sobre">Sobre</a>
   </div>
-</div>
+  <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="divider"></div>
+
+<section class="hero">
+  <h1>Motoclubes do Brasil</h1>
+  <p>Conheça os motoclubes, moto grupos e moto casais cadastrados na Central. Encontre sua tribo e faça parte da estrada.</p>
+</section>
+
+<section class="busca-section">
+  <div class="busca-inner">
+    <input type="text" id="busca-input" placeholder="Buscar por nome ou cidade...">
+    <select id="busca-estado">
+      <option value="">Estado</option>
+      <option value="ES">Espírito Santo</option>
+      <option value="MG">Minas Gerais</option>
+      <option value="RJ">Rio de Janeiro</option>
+    </select>
+    <span class="count"><span id="clube-count">8</span> motoclubes</span>
+  </div>
+</section>
+
+<section class="clubes-section" id="clubes">
+  <div class="clubes-inner">
+    <div class="clubes-grid" id="clubes-grid">
+
+      <div class="clube-card" data-nome="black night mc" data-estado="RJ">
+        <div class="clube-logo"><img src="img/WhatsApp Image 2026-08-29 at 11.51.18.jpeg" alt="Black Night MC"></div>
+        <span class="tag">MC</span>
+        <h3>Black Night MC</h3>
+        <div class="loc">Rio das Ostras, RJ</div>
+        <a href="#" class="btn btn-outline" style="width:100%;">Ver Mais</a>
+      </div>
+
+      <div class="clube-card" data-nome="icarus mc" data-estado="">
+        <div class="clube-logo"><img src="img/WhatsApp Image 2026-08-29 at 11.51.19 (1).jpeg" alt="Icarus MC"></div>
+        <span class="tag">MC</span>
+        <h3>Icarus MC</h3>
+        <div class="loc">Brasil</div>
+        <a href="#" class="btn btn-outline" style="width:100%;">Ver Mais</a>
+      </div>
+
+      <div class="clube-card" data-nome="skorpions mc do asfalto" data-estado="MG">
+        <div class="clube-logo"><img src="img/WhatsApp Image 2026-08-29 at 11.51.19 (2).jpeg" alt="Skorpions MC do Asfalto"></div>
+        <span class="tag">MC</span>
+        <h3>Skorpions MC do Asfalto</h3>
+        <div class="loc">Belo Horizonte, MG</div>
+        <a href="#" class="btn btn-outline" style="width:100%;">Ver Mais</a>
+      </div>
+
+      <div class="clube-card" data-nome="tgs four" data-estado="MG">
+        <div class="clube-logo"><img src="img/WhatsApp Image 2026-08-29 at 11.51.19.jpeg" alt="TGS Four"></div>
+        <span class="tag">Moto Casal</span>
+        <h3>TGS Four</h3>
+        <div class="loc">Barão de Cocais, MG</div>
+        <a href="#" class="btn btn-outline" style="width:100%;">Ver Mais</a>
+      </div>
+
+      <div class="clube-card" data-nome="road brutos club" data-estado="">
+        <div class="clube-logo"><img src="img/WhatsApp Image 2026-08-29 at 11.51.20 (1).jpeg" alt="Road Brutos Club"></div>
+        <span class="tag">Club</span>
+        <h3>Road Brutos Club</h3>
+        <div class="loc">Brasil</div>
+        <a href="#" class="btn btn-outline" style="width:100%;">Ver Mais</a>
+      </div>
+
+      <div class="clube-card" data-nome="valentes de cristo mc" data-estado="">
+        <div class="clube-logo"><img src="img/WhatsApp Image 2026-08-29 at 11.51.20 (2).jpeg" alt="Valentes de Cristo MC"></div>
+        <span class="tag">MC</span>
+        <h3>Valentes de Cristo MC</h3>
+        <div class="loc">Brasil</div>
+        <a href="#" class="btn btn-outline" style="width:100%;">Ver Mais</a>
+      </div>
+
+      <div class="clube-card" data-nome="cam moto clube" data-estado="">
+        <div class="clube-logo"><img src="img/WhatsApp Image 2026-08-29 at 11.51.20 (3).jpeg" alt="CAM Moto Clube"></div>
+        <span class="tag">Moto Clube</span>
+        <h3>CAM Moto Clube</h3>
+        <div class="loc">Brasil</div>
+        <a href="#" class="btn btn-outline" style="width:100%;">Ver Mais</a>
+      </div>
+
+      <div class="clube-card" data-nome="wolf skull mg" data-estado="ES">
+        <div class="clube-logo"><img src="img/WhatsApp Image 2026-08-29 at 11.51.20.jpeg" alt="Wolf Skull MG"></div>
+        <span class="tag">MG</span>
+        <h3>Wolf Skull MG</h3>
+        <div class="loc">Cachoeiro de Itapemirim, ES</div>
+        <a href="#" class="btn btn-outline" style="width:100%;">Ver Mais</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="cta-final" id="cadastrar">
+  <h2>Seu motoclube ainda não está na lista?</h2>
+  <a href="#" class="btn btn-red" style="padding:1.1rem 2.4rem;">Cadastrar Agora</a>
+</section>
+
+<footer>
+  © 2026 Central dos Moto Clubes — Conectando motociclistas de todo o Brasil. Protótipo de layout.
+</footer>
 
 <script>
-// Mesma base de dados da home — quando o Firestore entrar, isso vira um fetch()
-// e as duas páginas (home e esta) passam a ler do mesmo lugar.
-const CLUBES = [
-  { tipo: 'motoclube', nome: 'Lobos do Asfalto MC', local: 'Belo Horizonte, MG', emoji: '💀' },
-  { tipo: 'motoclube', nome: 'Falcões do Reino MC', local: 'Uberlândia, MG', emoji: '🦅' },
-  { tipo: 'motoclube', nome: 'Alcateia MC', local: 'São Paulo, SP', emoji: '🐺' },
-  { tipo: 'motoclube', nome: 'Asfalto Livre MC', local: 'Porto Alegre, RS', emoji: '🔥' },
-  { tipo: 'motoclube', nome: 'Ferro & Fogo MC', local: 'Contagem, MG', emoji: '⚙️' },
-];
-
-const TIPO_LABELS = {
-  motoclube: 'Motoclubes',
-  grupo: 'Moto Grupos',
-  viajante: 'Moto Viajantes',
-  casal: 'Moto Casais',
-};
-
-const params = new URLSearchParams(window.location.search);
-const tipo = params.get('tipo') || 'motoclube';
-const label = TIPO_LABELS[tipo] || 'Motoclubes';
-
-document.getElementById('tipoEyebrow').textContent = label;
-document.getElementById('tipoTitulo').textContent = label + ' em destaque';
-document.title = 'Central dos Moto Clubes — ' + label;
-
-const grid = document.getElementById('clubesGrid');
-const vazioMsg = document.getElementById('vazioMsg');
-const filtrados = CLUBES.filter(c => c.tipo === tipo);
-
-if (filtrados.length === 0) {
-  vazioMsg.style.display = 'block';
-} else {
-  filtrados.forEach(c => {
-    const card = document.createElement('div');
-    card.className = 'patch-card';
-    card.dataset.nome = c.nome;
-    card.dataset.local = c.local;
-    card.dataset.emoji = c.emoji;
-    card.innerHTML = `<div class="patch-badge"><span class="emoji">${c.emoji}</span></div><span class="patch-ribbon">MC</span><h3>${c.nome}</h3><span>${c.local}</span>`;
-    grid.appendChild(card);
-  });
-}
-
-const clubeModalOverlay = document.getElementById('clubeModalOverlay');
-const clubeModalBadge = document.getElementById('clubeModalBadge');
-const clubeModalNome = document.getElementById('clubeModalNome');
-const clubeModalLocal = document.getElementById('clubeModalLocal');
-document.querySelectorAll('.patch-card').forEach(card => {
-  card.addEventListener('click', () => {
-    clubeModalBadge.textContent = card.dataset.emoji;
-    clubeModalNome.textContent = card.dataset.nome;
-    clubeModalLocal.textContent = card.dataset.local;
-    clubeModalOverlay.classList.add('open');
-  });
+document.querySelector('.hamburger').addEventListener('click', () => {
+  document.querySelector('.nav-links').style.display =
+    document.querySelector('.nav-links').style.display === 'flex' ? 'none' : 'flex';
+  document.querySelector('.nav-links').style.flexDirection = 'column';
+  document.querySelector('.nav-links').style.width = '100%';
 });
-document.getElementById('clubeModalClose').addEventListener('click', () => clubeModalOverlay.classList.remove('open'));
-clubeModalOverlay.addEventListener('click', (e) => { if (e.target === clubeModalOverlay) clubeModalOverlay.classList.remove('open'); });
+
+var input = document.getElementById('busca-input');
+var estadoSel = document.getElementById('busca-estado');
+var cards = document.querySelectorAll('.clube-card');
+var countEl = document.getElementById('clube-count');
+
+function filtra(){
+  var termo = input.value.trim().toLowerCase();
+  var estado = estadoSel.value;
+  var visiveis = 0;
+  cards.forEach(function(c){
+    var nome = c.dataset.nome;
+    var loc = c.querySelector('.loc').textContent.toLowerCase();
+    var matchTexto = nome.includes(termo) || loc.includes(termo);
+    var matchEstado = !estado || c.dataset.estado === estado;
+    var mostra = matchTexto && matchEstado;
+    c.style.display = mostra ? '' : 'none';
+    if(mostra) visiveis++;
+  });
+  countEl.textContent = visiveis;
+}
+input.addEventListener('input', filtra);
+estadoSel.addEventListener('change', filtra);
 </script>
 </body>
 </html>
