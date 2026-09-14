@@ -16,6 +16,7 @@
   --smoke:#b3a89a;
   --red:#c31f1f;
   --green:#3fbf6f;
+  --amber:#e0a835;
   --line-strong: rgba(242,233,219,.24);
   --display:'Anton',sans-serif;
   --body:'Inter',sans-serif;
@@ -25,36 +26,57 @@
 body{background:var(--black);color:var(--cream);font-family:var(--body);line-height:1.5;min-height:100vh;}
 h1{font-family:var(--display);text-transform:uppercase;font-weight:400;letter-spacing:.01em;}
 button{font-family:inherit;cursor:pointer;border:none;border-radius:6px;font-weight:700;}
+input,textarea,select{font-family:inherit;}
 img{display:block;max-width:100%;}
 
-/* Login */
 .login-wrap{max-width:380px;margin:8rem auto;padding:0 6vw;}
 .login-wrap h1{font-size:1.8rem;margin-bottom:1.6rem;text-align:center;}
 .login-wrap input{width:100%;padding:.85rem 1rem;margin-bottom:1rem;background:var(--card);border:1px solid var(--line-strong);border-radius:6px;color:var(--cream);font-size:.95rem;}
 .login-wrap button{width:100%;padding:.9rem;background:var(--red);color:var(--cream);font-size:.95rem;}
 .login-err{color:#f0a6a6;font-size:.85rem;margin-top:.8rem;text-align:center;display:none;}
 
-/* Painel */
 .painel{display:none;max-width:1000px;margin:0 auto;padding:2.5rem 6vw 4rem;}
-.painel-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+.painel-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.6rem;flex-wrap:wrap;gap:1rem;}
 .painel-topo h1{font-size:1.7rem;}
 .sair-btn{padding:.6rem 1.1rem;background:var(--card);border:1px solid var(--line-strong);color:var(--cream);font-size:.82rem;}
 .sair-btn:hover{border-color:var(--red);}
 
+.abas{display:flex;gap:.6rem;margin-bottom:1.6rem;border-bottom:1px solid var(--line-strong);}
+.aba-btn{background:transparent;padding:.8rem 1.2rem;color:var(--smoke);font-size:.88rem;border-bottom:2px solid transparent;border-radius:0;}
+.aba-btn.ativa{color:var(--cream);border-bottom-color:var(--red);}
+
 .lista{display:flex;flex-direction:column;gap:1rem;}
-.pendente-card{background:var(--card);border:1px solid var(--line-strong);border-radius:10px;padding:1.2rem;display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap;}
-.pendente-logo{width:72px;height:72px;border-radius:50%;overflow:hidden;background:var(--black);border:2px solid var(--red);flex-shrink:0;}
-.pendente-logo img{width:100%;height:100%;object-fit:cover;}
-.pendente-info{flex:1;min-width:220px;}
-.pendente-info h3{font-size:1.05rem;margin-bottom:.3rem;}
-.pendente-info .meta{font-size:.82rem;color:var(--smoke);margin-bottom:.4rem;}
-.pendente-info .desc{font-size:.85rem;color:var(--smoke);}
-.pendente-acoes{display:flex;gap:.6rem;flex-shrink:0;}
-.pendente-acoes button{padding:.7rem 1.2rem;font-size:.85rem;}
+.cadastro-card{background:var(--card);border:1px solid var(--line-strong);border-radius:10px;padding:1.2rem;}
+.cadastro-topo{display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap;}
+.cadastro-logo{width:72px;height:72px;border-radius:50%;overflow:hidden;background:var(--black);border:2px solid var(--red);flex-shrink:0;}
+.cadastro-logo img{width:100%;height:100%;object-fit:cover;}
+.cadastro-info{flex:1;min-width:220px;}
+.cadastro-info h3{font-size:1.05rem;margin-bottom:.3rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.status-badge{font-family:var(--tag);font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;padding:.2rem .55rem;border-radius:20px;font-weight:600;}
+.status-badge.pendente{color:var(--amber);background:rgba(224,168,53,.12);border:1px solid rgba(224,168,53,.3);}
+.status-badge.aprovado{color:var(--green);background:rgba(63,191,111,.12);border:1px solid rgba(63,191,111,.3);}
+.status-badge.rejeitado{color:var(--red);background:rgba(195,31,31,.12);border:1px solid rgba(195,31,31,.3);}
+.cadastro-info .meta{font-size:.82rem;color:var(--smoke);margin-bottom:.4rem;}
+.cadastro-info .desc{font-size:.85rem;color:var(--smoke);}
+.cadastro-acoes{display:flex;gap:.5rem;flex-shrink:0;flex-wrap:wrap;}
+.cadastro-acoes button{padding:.65rem 1rem;font-size:.82rem;}
 .aprovar-btn{background:var(--green);color:var(--black);}
-.rejeitar-btn{background:transparent;border:1px solid var(--red);color:var(--red);}
+.rejeitar-btn{background:transparent;border:1px solid var(--amber);color:var(--amber);}
+.editar-btn{background:transparent;border:1px solid var(--line-strong);color:var(--cream);}
+.excluir-btn{background:transparent;border:1px solid var(--red);color:var(--red);}
+
 .vazio{text-align:center;color:var(--smoke);padding:3rem 0;}
 .carregando{text-align:center;color:var(--smoke);padding:3rem 0;}
+
+.form-edicao{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line-strong);display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.form-edicao .full{grid-column:1/-1;}
+.form-edicao label{display:block;font-family:var(--tag);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--smoke);margin-bottom:.3rem;}
+.form-edicao input,.form-edicao textarea{width:100%;padding:.6rem .8rem;background:var(--black);border:1px solid var(--line-strong);border-radius:6px;color:var(--cream);font-size:.85rem;}
+.form-edicao textarea{min-height:70px;resize:vertical;}
+.form-edicao-acoes{grid-column:1/-1;display:flex;gap:.6rem;margin-top:.4rem;}
+.salvar-btn{background:var(--red);color:var(--cream);padding:.7rem 1.3rem;font-size:.85rem;}
+.cancelar-btn{background:transparent;border:1px solid var(--line-strong);color:var(--cream);padding:.7rem 1.3rem;font-size:.85rem;}
+@media(max-width:560px){.form-edicao{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -69,8 +91,13 @@ img{display:block;max-width:100%;}
 
 <div class="painel" id="painel">
   <div class="painel-topo">
-    <h1>Cadastros Pendentes</h1>
+    <h1>Painel de Cadastros</h1>
     <button class="sair-btn" id="sair-btn">Sair</button>
+  </div>
+  <div class="abas">
+    <button class="aba-btn ativa" data-status="pendente">Pendentes</button>
+    <button class="aba-btn" data-status="aprovado">Aprovados</button>
+    <button class="aba-btn" data-status="rejeitado">Rejeitados</button>
   </div>
   <div class="lista" id="lista">
     <div class="carregando">Carregando...</div>
@@ -83,7 +110,7 @@ import {
   getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-  getFirestore, collection, query, where, getDocs, doc, updateDoc
+  getFirestore, collection, query, where, getDocs, doc, updateDoc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -107,6 +134,9 @@ const loginBtn = document.getElementById('login-btn');
 const loginErr = document.getElementById('login-err');
 const sairBtn = document.getElementById('sair-btn');
 const lista = document.getElementById('lista');
+const abaBtns = document.querySelectorAll('.aba-btn');
+
+let statusAtual = 'pendente';
 
 loginBtn.addEventListener('click', async () => {
   loginErr.style.display = 'none';
@@ -120,11 +150,20 @@ loginBtn.addEventListener('click', async () => {
 
 sairBtn.addEventListener('click', () => signOut(auth));
 
+abaBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    abaBtns.forEach(b => b.classList.remove('ativa'));
+    btn.classList.add('ativa');
+    statusAtual = btn.dataset.status;
+    carregaLista();
+  });
+});
+
 onAuthStateChanged(auth, (user) => {
   if (user) {
     loginWrap.style.display = 'none';
     painel.style.display = 'block';
-    carregaPendentes();
+    carregaLista();
   } else {
     loginWrap.style.display = 'block';
     painel.style.display = 'none';
@@ -137,45 +176,31 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
-async function carregaPendentes(){
+const CAMPOS_EDITAVEIS = [
+  { key: 'nome', label: 'Nome', tipo: 'input', full: true },
+  { key: 'tipo', label: 'Tipo', tipo: 'input' },
+  { key: 'estado', label: 'Estado (UF)', tipo: 'input' },
+  { key: 'cidade', label: 'Cidade', tipo: 'input' },
+  { key: 'endereco', label: 'Endereço', tipo: 'input', full: true },
+  { key: 'whatsapp', label: 'WhatsApp', tipo: 'input' },
+  { key: 'instagram', label: 'Instagram', tipo: 'input' },
+  { key: 'descricao', label: 'Descrição', tipo: 'textarea', full: true }
+];
+
+async function carregaLista(){
   lista.innerHTML = '<div class="carregando">Carregando...</div>';
   try {
-    const q = query(collection(db, 'motoclubes'), where('status', '==', 'pendente'));
+    const q = query(collection(db, 'motoclubes'), where('status', '==', statusAtual));
     const snap = await getDocs(q);
 
     if (snap.empty) {
-      lista.innerHTML = '<div class="vazio">Nenhum cadastro pendente no momento.</div>';
+      lista.innerHTML = `<div class="vazio">Nenhum cadastro com status "${statusAtual}" no momento.</div>`;
       return;
     }
 
     lista.innerHTML = '';
     snap.forEach(docSnap => {
-      const c = docSnap.data();
-      const id = docSnap.id;
-      const loc = [c.cidade, c.estado].filter(Boolean).join(', ');
-
-      const card = document.createElement('div');
-      card.className = 'pendente-card';
-      card.innerHTML = `
-        <div class="pendente-logo"><img src="${c.logoUrl}" alt="${escapeHtml(c.nome)}"></div>
-        <div class="pendente-info">
-          <h3>${escapeHtml(c.nome)}</h3>
-          <div class="meta">${escapeHtml(loc)} · ${escapeHtml(c.tipo || '')} · ${escapeHtml(c.whatsapp || '')}${c.instagram ? ' · ' + escapeHtml(c.instagram) : ''}</div>
-          ${c.descricao ? `<div class="desc">${escapeHtml(c.descricao)}</div>` : ''}
-        </div>
-        <div class="pendente-acoes">
-          <button class="aprovar-btn" data-id="${id}">Aprovar</button>
-          <button class="rejeitar-btn" data-id="${id}">Rejeitar</button>
-        </div>
-      `;
-      lista.appendChild(card);
-    });
-
-    lista.querySelectorAll('.aprovar-btn').forEach(btn => {
-      btn.addEventListener('click', () => atualizaStatus(btn.dataset.id, 'aprovado', btn));
-    });
-    lista.querySelectorAll('.rejeitar-btn').forEach(btn => {
-      btn.addEventListener('click', () => atualizaStatus(btn.dataset.id, 'rejeitado', btn));
+      lista.appendChild(criaCadastroCard(docSnap.id, docSnap.data()));
     });
   } catch (err) {
     console.error(err);
@@ -183,15 +208,59 @@ async function carregaPendentes(){
   }
 }
 
-async function atualizaStatus(id, novoStatus, btnClicado){
-  const card = btnClicado.closest('.pendente-card');
+function criaCadastroCard(id, c){
+  const loc = [c.cidade, c.estado].filter(Boolean).join(', ');
+
+  const card = document.createElement('div');
+  card.className = 'cadastro-card';
+  card.dataset.id = id;
+
+  let botoesHtml = '';
+  if (c.status === 'pendente') {
+    botoesHtml += `<button class="aprovar-btn" data-acao="aprovado">Aprovar</button>`;
+    botoesHtml += `<button class="rejeitar-btn" data-acao="rejeitado">Rejeitar</button>`;
+  } else if (c.status === 'aprovado') {
+    botoesHtml += `<button class="rejeitar-btn" data-acao="rejeitado">Remover do site</button>`;
+  } else if (c.status === 'rejeitado') {
+    botoesHtml += `<button class="aprovar-btn" data-acao="aprovado">Aprovar</button>`;
+  }
+  botoesHtml += `<button class="editar-btn" data-acao="editar">Editar</button>`;
+  botoesHtml += `<button class="excluir-btn" data-acao="excluir">Excluir</button>`;
+
+  card.innerHTML = `
+    <div class="cadastro-topo">
+      <div class="cadastro-logo"><img src="${c.logoUrl || ''}" alt="${escapeHtml(c.nome)}"></div>
+      <div class="cadastro-info">
+        <h3>${escapeHtml(c.nome)} <span class="status-badge ${c.status}">${escapeHtml(c.status)}</span></h3>
+        <div class="meta">${escapeHtml(loc)} · ${escapeHtml(c.tipo || '')} · ${escapeHtml(c.whatsapp || '')}${c.instagram ? ' · ' + escapeHtml(c.instagram) : ''}</div>
+        ${c.descricao ? `<div class="desc">${escapeHtml(c.descricao)}</div>` : ''}
+      </div>
+      <div class="cadastro-acoes">${botoesHtml}</div>
+    </div>
+  `;
+
+  card.querySelectorAll('[data-acao]').forEach(btn => {
+    const acao = btn.dataset.acao;
+    if (acao === 'editar') {
+      btn.addEventListener('click', () => abreFormEdicao(card, id, c));
+    } else if (acao === 'excluir') {
+      btn.addEventListener('click', () => excluiCadastro(card, id));
+    } else {
+      btn.addEventListener('click', () => atualizaStatus(card, id, acao));
+    }
+  });
+
+  return card;
+}
+
+async function atualizaStatus(card, id, novoStatus){
   card.style.opacity = '.4';
   card.querySelectorAll('button').forEach(b => b.disabled = true);
   try {
     await updateDoc(doc(db, 'motoclubes', id), { status: novoStatus });
     card.remove();
-    if (!lista.querySelector('.pendente-card')) {
-      lista.innerHTML = '<div class="vazio">Nenhum cadastro pendente no momento.</div>';
+    if (!lista.querySelector('.cadastro-card')) {
+      lista.innerHTML = `<div class="vazio">Nenhum cadastro com status "${statusAtual}" no momento.</div>`;
     }
   } catch (err) {
     console.error(err);
@@ -199,6 +268,71 @@ async function atualizaStatus(id, novoStatus, btnClicado){
     card.style.opacity = '1';
     card.querySelectorAll('button').forEach(b => b.disabled = false);
   }
+}
+
+async function excluiCadastro(card, id){
+  const confirmar = confirm('Tem certeza que quer excluir esse cadastro? Essa ação não pode ser desfeita.');
+  if (!confirmar) return;
+
+  card.style.opacity = '.4';
+  card.querySelectorAll('button').forEach(b => b.disabled = true);
+  try {
+    await deleteDoc(doc(db, 'motoclubes', id));
+    card.remove();
+    if (!lista.querySelector('.cadastro-card')) {
+      lista.innerHTML = `<div class="vazio">Nenhum cadastro com status "${statusAtual}" no momento.</div>`;
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao excluir. Tente novamente.');
+    card.style.opacity = '1';
+    card.querySelectorAll('button').forEach(b => b.disabled = false);
+  }
+}
+
+function abreFormEdicao(card, id, c){
+  const existente = card.querySelector('.form-edicao');
+  if (existente) { existente.remove(); return; }
+
+  const form = document.createElement('div');
+  form.className = 'form-edicao';
+
+  form.innerHTML = CAMPOS_EDITAVEIS.map(campo => {
+    const valor = escapeHtml(c[campo.key] || '');
+    const campoHtml = campo.tipo === 'textarea'
+      ? `<textarea data-campo="${campo.key}">${valor}</textarea>`
+      : `<input type="text" data-campo="${campo.key}" value="${valor}">`;
+    return `<div class="${campo.full ? 'full' : ''}"><label>${campo.label}</label>${campoHtml}</div>`;
+  }).join('') + `
+    <div class="form-edicao-acoes">
+      <button class="salvar-btn" type="button">Salvar</button>
+      <button class="cancelar-btn" type="button">Cancelar</button>
+    </div>
+  `;
+
+  card.appendChild(form);
+
+  form.querySelector('.cancelar-btn').addEventListener('click', () => form.remove());
+  form.querySelector('.salvar-btn').addEventListener('click', async () => {
+    const dadosAtualizados = {};
+    form.querySelectorAll('[data-campo]').forEach(campoEl => {
+      dadosAtualizados[campoEl.dataset.campo] = campoEl.value.trim();
+    });
+
+    const salvarBtn = form.querySelector('.salvar-btn');
+    salvarBtn.disabled = true;
+    salvarBtn.textContent = 'Salvando...';
+
+    try {
+      await updateDoc(doc(db, 'motoclubes', id), dadosAtualizados);
+      carregaLista();
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao salvar. Tente novamente.');
+      salvarBtn.disabled = false;
+      salvarBtn.textContent = 'Salvar';
+    }
+  });
 }
 </script>
 </body>
