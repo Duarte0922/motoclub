@@ -252,7 +252,7 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
-function criaCard(clube){
+function criaCard(clube, id){
   const div = document.createElement('div');
   div.className = 'clube-card';
   div.dataset.nome = (clube.nome || '').toLowerCase();
@@ -266,7 +266,7 @@ function criaCard(clube){
     <span class="tag">${escapeHtml(tag)}</span>
     <h3>${escapeHtml(clube.nome)}</h3>
     <div class="loc">${escapeHtml(loc)}</div>
-    <a href="#" class="btn btn-outline" style="width:100%;">Ver Mais</a>
+    <a href="clube.html?id=${encodeURIComponent(id)}" class="btn btn-outline" style="width:100%;">Ver Mais</a>
   `;
   return div;
 }
@@ -276,8 +276,8 @@ async function carregaAprovados(){
   try {
     const q = query(collection(db, 'motoclubes'), where('status', '==', 'aprovado'));
     const snap = await getDocs(q);
-    snap.forEach(doc => {
-      grid.appendChild(criaCard(doc.data()));
+    snap.forEach(docSnap => {
+      grid.appendChild(criaCard(docSnap.data(), docSnap.id));
     });
   } catch (err) {
     console.error('Erro ao carregar motoclubes aprovados:', err);
