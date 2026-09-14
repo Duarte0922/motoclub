@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Central dos Moto Clubes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0908;
+  --black-soft:#151212;
+  --card:#1c1817;
+  --cream:#f2e9db;
+  --smoke:#b3a89a;
+  --red:#c31f1f;
+  --green:#3fbf6f;
+  --line-strong: rgba(242,233,219,.24);
+  --display:'Anton',sans-serif;
+  --body:'Inter',sans-serif;
+  --tag:'Oswald',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--cream);font-family:var(--body);line-height:1.5;min-height:100vh;}
+h1{font-family:var(--display);text-transform:uppercase;font-weight:400;letter-spacing:.01em;}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:6px;font-weight:700;}
+img{display:block;max-width:100%;}
+
+/* Login */
+.login-wrap{max-width:380px;margin:8rem auto;padding:0 6vw;}
+.login-wrap h1{font-size:1.8rem;margin-bottom:1.6rem;text-align:center;}
+.login-wrap input{width:100%;padding:.85rem 1rem;margin-bottom:1rem;background:var(--card);border:1px solid var(--line-strong);border-radius:6px;color:var(--cream);font-size:.95rem;}
+.login-wrap button{width:100%;padding:.9rem;background:var(--red);color:var(--cream);font-size:.95rem;}
+.login-err{color:#f0a6a6;font-size:.85rem;margin-top:.8rem;text-align:center;display:none;}
+
+/* Painel */
+.painel{display:none;max-width:1000px;margin:0 auto;padding:2.5rem 6vw 4rem;}
+.painel-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+.painel-topo h1{font-size:1.7rem;}
+.sair-btn{padding:.6rem 1.1rem;background:var(--card);border:1px solid var(--line-strong);color:var(--cream);font-size:.82rem;}
+.sair-btn:hover{border-color:var(--red);}
+
+.lista{display:flex;flex-direction:column;gap:1rem;}
+.pendente-card{background:var(--card);border:1px solid var(--line-strong);border-radius:10px;padding:1.2rem;display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap;}
+.pendente-logo{width:72px;height:72px;border-radius:50%;overflow:hidden;background:var(--black);border:2px solid var(--red);flex-shrink:0;}
+.pendente-logo img{width:100%;height:100%;object-fit:cover;}
+.pendente-info{flex:1;min-width:220px;}
+.pendente-info h3{font-size:1.05rem;margin-bottom:.3rem;}
+.pendente-info .meta{font-size:.82rem;color:var(--smoke);margin-bottom:.4rem;}
+.pendente-info .desc{font-size:.85rem;color:var(--smoke);}
+.pendente-acoes{display:flex;gap:.6rem;flex-shrink:0;}
+.pendente-acoes button{padding:.7rem 1.2rem;font-size:.85rem;}
+.aprovar-btn{background:var(--green);color:var(--black);}
+.rejeitar-btn{background:transparent;border:1px solid var(--red);color:var(--red);}
+.vazio{text-align:center;color:var(--smoke);padding:3rem 0;}
+.carregando{text-align:center;color:var(--smoke);padding:3rem 0;}
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="login-wrap">
+  <h1>Painel Admin</h1>
+  <input type="email" id="login-email" placeholder="Email">
+  <input type="password" id="login-senha" placeholder="Senha">
+  <button id="login-btn">Entrar</button>
+  <div class="login-err" id="login-err">Email ou senha incorretos.</div>
+</div>
+
+<div class="painel" id="painel">
+  <div class="painel-topo">
+    <h1>Cadastros Pendentes</h1>
+    <button class="sair-btn" id="sair-btn">Sair</button>
+  </div>
+  <div class="lista" id="lista">
+    <div class="carregando">Carregando...</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, collection, query, where, getDocs, doc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDWJxiCRdR7bwQil6MineZUclcA3I4l6yU",
+  authDomain: "motoclubs-9469c.firebaseapp.com",
+  projectId: "motoclubs-9469c",
+  storageBucket: "motoclubs-9469c.firebasestorage.app",
+  messagingSenderId: "1044550010096",
+  appId: "1:1044550010096:web:feda4da9dd7bd17dbb2e35"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const loginWrap = document.getElementById('login-wrap');
+const painel = document.getElementById('painel');
+const loginEmail = document.getElementById('login-email');
+const loginSenha = document.getElementById('login-senha');
+const loginBtn = document.getElementById('login-btn');
+const loginErr = document.getElementById('login-err');
+const sairBtn = document.getElementById('sair-btn');
+const lista = document.getElementById('lista');
+
+loginBtn.addEventListener('click', async () => {
+  loginErr.style.display = 'none';
+  try {
+    await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginSenha.value);
+  } catch (err) {
+    console.error(err);
+    loginErr.style.display = 'block';
+  }
+});
+
+sairBtn.addEventListener('click', () => signOut(auth));
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loginWrap.style.display = 'none';
+    painel.style.display = 'block';
+    carregaPendentes();
+  } else {
+    loginWrap.style.display = 'block';
+    painel.style.display = 'none';
+  }
+});
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+async function carregaPendentes(){
+  lista.innerHTML = '<div class="carregando">Carregando...</div>';
+  try {
+    const q = query(collection(db, 'motoclubes'), where('status', '==', 'pendente'));
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      lista.innerHTML = '<div class="vazio">Nenhum cadastro pendente no momento.</div>';
+      return;
+    }
+
+    lista.innerHTML = '';
+    snap.forEach(docSnap => {
+      const c = docSnap.data();
+      const id = docSnap.id;
+      const loc = [c.cidade, c.estado].filter(Boolean).join(', ');
+
+      const card = document.createElement('div');
+      card.className = 'pendente-card';
+      card.innerHTML = `
+        <div class="pendente-logo"><img src="${c.logoUrl}" alt="${escapeHtml(c.nome)}"></div>
+        <div class="pendente-info">
+          <h3>${escapeHtml(c.nome)}</h3>
+          <div class="meta">${escapeHtml(loc)} · ${escapeHtml(c.tipo || '')} · ${escapeHtml(c.whatsapp || '')}${c.instagram ? ' · ' + escapeHtml(c.instagram) : ''}</div>
+          ${c.descricao ? `<div class="desc">${escapeHtml(c.descricao)}</div>` : ''}
+        </div>
+        <div class="pendente-acoes">
+          <button class="aprovar-btn" data-id="${id}">Aprovar</button>
+          <button class="rejeitar-btn" data-id="${id}">Rejeitar</button>
+        </div>
+      `;
+      lista.appendChild(card);
+    });
+
+    lista.querySelectorAll('.aprovar-btn').forEach(btn => {
+      btn.addEventListener('click', () => atualizaStatus(btn.dataset.id, 'aprovado', btn));
+    });
+    lista.querySelectorAll('.rejeitar-btn').forEach(btn => {
+      btn.addEventListener('click', () => atualizaStatus(btn.dataset.id, 'rejeitado', btn));
+    });
+  } catch (err) {
+    console.error(err);
+    lista.innerHTML = '<div class="vazio">Erro ao carregar cadastros. Veja o console (F12).</div>';
+  }
+}
+
+async function atualizaStatus(id, novoStatus, btnClicado){
+  const card = btnClicado.closest('.pendente-card');
+  card.style.opacity = '.4';
+  card.querySelectorAll('button').forEach(b => b.disabled = true);
+  try {
+    await updateDoc(doc(db, 'motoclubes', id), { status: novoStatus });
+    card.remove();
+    if (!lista.querySelector('.pendente-card')) {
+      lista.innerHTML = '<div class="vazio">Nenhum cadastro pendente no momento.</div>';
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao atualizar. Tente novamente.');
+    card.style.opacity = '1';
+    card.querySelectorAll('button').forEach(b => b.disabled = false);
+  }
+}
+</script>
+</body>
+</html>
